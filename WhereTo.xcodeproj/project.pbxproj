@@ -13,6 +13,7 @@
 		9FEF65341CD0F4ED00651E04 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9FEF65321CD0F4ED00651E04 /* Main.storyboard */; };
 		9FEF65361CD0F4ED00651E04 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9FEF65351CD0F4ED00651E04 /* Assets.xcassets */; };
 		9FEF65391CD0F4ED00651E04 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9FEF65371CD0F4ED00651E04 /* LaunchScreen.storyboard */; };
+		9FEF65421CD1031600651E04 /* Landmark.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF65411CD1031600651E04 /* Landmark.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,8 @@
 		9FEF65351CD0F4ED00651E04 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9FEF65381CD0F4ED00651E04 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9FEF653A1CD0F4ED00651E04 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9FEF65401CD1031600651E04 /* Landmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Landmark.h; sourceTree = "<group>"; };
+		9FEF65411CD1031600651E04 /* Landmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Landmark.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +63,8 @@
 			children = (
 				9FEF652C1CD0F4ED00651E04 /* AppDelegate.h */,
 				9FEF652D1CD0F4ED00651E04 /* AppDelegate.m */,
+				9FEF65401CD1031600651E04 /* Landmark.h */,
+				9FEF65411CD1031600651E04 /* Landmark.m */,
 				9FEF652F1CD0F4ED00651E04 /* ViewController.h */,
 				9FEF65301CD0F4ED00651E04 /* ViewController.m */,
 				9FEF65321CD0F4ED00651E04 /* Main.storyboard */,
@@ -153,6 +158,7 @@
 				9FEF65311CD0F4ED00651E04 /* ViewController.m in Sources */,
 				9FEF652E1CD0F4ED00651E04 /* AppDelegate.m in Sources */,
 				9FEF652B1CD0F4ED00651E04 /* main.m in Sources */,
+				9FEF65421CD1031600651E04 /* Landmark.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +309,7 @@
 				9FEF653F1CD0F4ED00651E04 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

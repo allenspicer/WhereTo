@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "ViewController.h"
 
 @interface AppDelegate ()
 
@@ -16,6 +17,22 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    //define ui screen boundaries and set to window property of this class
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    
+    //create view controller object (necessitates importing our boiler plate viewcontroller class)
+    UIViewController * viewController = [[ViewController alloc]init];
+    
+    //creating navigation controller
+    UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:viewController];
+    
+    //place navigation controller in window
+    self.window.rootViewController = navController;
+    
+    //put the window in focus - make it the visible object in the app
+    [self.window makeKeyAndVisible];
+    
     // Override point for customization after application launch.
     return YES;
 }
