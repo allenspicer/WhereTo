@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9F7959B81CD7E370009D9FD7 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F7959B71CD7E370009D9FD7 /* MapKit.framework */; };
 		9FEF652B1CD0F4ED00651E04 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF652A1CD0F4ED00651E04 /* main.m */; };
 		9FEF652E1CD0F4ED00651E04 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF652D1CD0F4ED00651E04 /* AppDelegate.m */; };
 		9FEF65311CD0F4ED00651E04 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF65301CD0F4ED00651E04 /* ViewController.m */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9F7959B71CD7E370009D9FD7 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		9FEF65261CD0F4ED00651E04 /* WhereTo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhereTo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FEF652A1CD0F4ED00651E04 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		9FEF652C1CD0F4ED00651E04 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -36,6 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F7959B81CD7E370009D9FD7 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,6 +48,7 @@
 		9FEF651D1CD0F4ED00651E04 = {
 			isa = PBXGroup;
 			children = (
+				9F7959B71CD7E370009D9FD7 /* MapKit.framework */,
 				9FEF65281CD0F4ED00651E04 /* WhereTo */,
 				9FEF65271CD0F4ED00651E04 /* Products */,
 			);
@@ -116,6 +120,11 @@
 					9FEF65251CD0F4ED00651E04 = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = QS2H85Z9GF;
+						SystemCapabilities = {
+							com.apple.Maps.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};

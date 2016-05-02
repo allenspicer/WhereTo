@@ -149,8 +149,41 @@
 
 }
 
--(void)lookUpCities:(NSArray*)cities{
+-(void)lookUpCities:(NSArray*)cityArray{
+    NSAssert2(@"Both strings", @"are present", cityArray[0], cityArray[1]);
     
+    CLGeocoder * geocoder = [[CLGeocoder alloc]init];
+    
+    __block CLLocationCoordinate2D firstPlace;
+    __block CLLocationCoordinate2D secondPlace;
+    
+    __block ViewController * weakSelf = self;
+    
+    [geocoder geocodeAddressString:cityArray[0]
+                 completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks,
+                                     NSError * _Nullable error) {
+                     CLPlacemark * placemark = [placemarks lastObject];
+                     firstPlace = placemark.location.coordinate;
+                        Landmark *theFirst = [[Landmark alloc]initWithCoord:firstPlace title:cityArray[0] subtitlle:@"The first location"];
+                     [weakSelf.mapView addAnnotation:theFirst];
+                     [geocoder cancelGeocode];
+                     
+    }];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+    [geocoder geocodeAddressString:cityArray[1]
+                 completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks,
+                                     NSError * _Nullable error) {
+                    CLPlacemark * placemark = [placemarks lastObject];
+                    secondPlace = placemark.location.coordinate;
+                    Landmark *theSecond = [[Landmark alloc]initWithCoord:secondPlace title:cityArray[1] subtitlle:@"The second location"];
+                     [weakSelf.mapView addAnnotation:theSecond];
+                     [geocoder cancelGeocode];
+                     
+                     }];
+      });
+
 }
 
 
