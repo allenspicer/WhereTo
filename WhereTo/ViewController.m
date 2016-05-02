@@ -11,6 +11,7 @@
 #import "Landmark.h"
 #import <UIKit/UIKit.h>
 
+
 @interface ViewController () <CLLocationManagerDelegate, UIPopoverPresentationControllerDelegate>
 
 @property (strong, nonatomic) MKMapView *mapView;
@@ -82,7 +83,7 @@
     self.manager.delegate = self;
     [self.manager startUpdatingLocation];
     
-    UIBarButtonItem * locationButton = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addButtonPressed)];
+    UIBarButtonItem * locationButton = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addButtonPressed:)];
     self.navigationItem.leftBarButtonItem = locationButton;
     
     
@@ -110,37 +111,62 @@
 }
 
 
-+(UIViewController *)controllerForInsidePopover{
+-(UIViewController *)controllerForInsidePopover{
     UIViewController * createMeNow = [[UIViewController alloc]init];
     
-    UITextView *firstText = [UITextField alloc]initWithFrame:CGRectMake[(10, 10, self.view.frame.size.width-40, 30)];
+    createMeNow.view.backgroundColor = UIColor.whiteColor;
     
-    [createMeNow.view addSubView: firstText];
+    UITextField *firstText = [[UITextField alloc]initWithFrame:CGRectMake(10, 40, 300, 30)];
+    firstText.borderStyle = UITextBorderStyleLine;
+    firstText.tag = 5;
+    [createMeNow.view addSubview: firstText];
     
-    UITextView *secondText = [UITextField alloc]initWithFrame:CGRectMake[(10, 50, self.view.frame.size.width-40, 30)];
+    UITextField *secondText = [[UITextField alloc]initWithFrame:CGRectMake(10, 80, 300, 30)];
+    secondText.borderStyle = UITextBorderStyleLine;
+    secondText.tag = 6;
+    [createMeNow.view addSubview: secondText];
     
-    [createMeNow.view addSubView: secondText];
+    UIButton * closeMeButton = [[UIButton alloc]initWithFrame:CGRectMake(10, 120, 200, 35)];
     
-    UIButton * closeMeButton = [[UIButton alloc]initWithFrame:CGRectMake(10, 90, 200, 35)];
+    [closeMeButton setTitle:@"Close Me" forState:UIControlStateNormal];
+    [closeMeButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
     
-    [closeMeButton addTarget:createMeNow action:@selector(dismissAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    [closeMeButton addTarget:self action:@selector(closePopoverView) forControlEvents:UIControlEventTouchUpInside];
+    
+    [createMeNow.view addSubview:closeMeButton];
     
     return createMeNow;
 }
 
+-(void)closePopoverView{
+    
+    UITextField * firstText = [self.insideViewController.view viewWithTag:5];
+    UITextField * secondText = [self.insideViewController.view viewWithTag:6];
+    
+    
+    [self lookUpCities:@[firstText.text, secondText.text]];
+    [self.insideViewController dismissViewControllerAnimated:YES completion:nil];
+
+}
+
+-(void)lookUpCities:(NSArray*)cities{
+    
+}
+
+
 -(IBAction)addButtonPressed: (UIBarButtonItem*)sender
 {
     
-    UIViewController* insideViewController = [self controllerForInsidePopover];
-    insideViewController.modalPresentationStyle = UIModalPresentationPopover;
+    self.insideViewController = [self controllerForInsidePopover];
+    self.insideViewController.modalPresentationStyle = UIModalPresentationPopover;
 
     UIPopoverPresentationController * popPresController = [self.insideViewController popoverPresentationController];
     
     popPresController.delegate = self;
     popPresController.permittedArrowDirections = UIPopoverArrowDirectionAny;
-   // popPresController.barButtonItem = sender;
+    popPresController.barButtonItem = sender;
     
-    [self presentViewController:insideViewController animated:YES completion:nil];
+    [self presentViewController:self.insideViewController animated:YES completion:nil];
     
 }
 
@@ -217,6 +243,7 @@
 
     [manager stopUpdatingLocation];
 }
+
 
 #pragma mark Navigation Controller
 

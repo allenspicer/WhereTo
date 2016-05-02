@@ -10,14 +10,11 @@
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate> {
 
-    UIWindow *window;
    // UINavigationController *navController;
-    
 
 }
 
 @property (strong, nonatomic) UIWindow *window;
-@property (strong, nonatomic) UINavigationController *navController;
 
 
 @end
