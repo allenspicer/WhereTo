@@ -23,14 +23,7 @@
     return self;
 }
 
-//
-//-(instancetype)init{
-//    CLLocationManager *manager = [[CLLocationManager alloc] init];
-//    [manager requestAlwaysAuthorization];
-//
-//    return self;
-//}
-//
+
 
 
 

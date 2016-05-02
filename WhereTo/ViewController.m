@@ -9,12 +9,19 @@
 #import "ViewController.h"
 #import <MapKit/MapKit.h>
 #import "Landmark.h"
+#import <UIKit/UIKit.h>
 
-@interface ViewController () <CLLocationManagerDelegate>
+@interface ViewController () <CLLocationManagerDelegate, UIPopoverPresentationControllerDelegate>
 
 @property (strong, nonatomic) MKMapView *mapView;
 //must create property to correct the fact that the object dissapears immediatly after view loads
 @property(strong, nonatomic) CLLocationManager *manager;
+
+@property (strong, nonatomic) UINavigationController *presentViewController;
+
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *plusButton;
+
+@property(strong, nonatomic)UIViewController *insideViewController;
 
 
 @end
@@ -47,33 +54,45 @@
     self.manager = manager;
     
     
+    
     //display map initialized above
     self.mapView = [[MKMapView alloc]initWithFrame:theFrame];
     
     //frame is a struct - value type, is set and we create new ones all the time, we dont modify just one
     
     [self.view addSubview:self.mapView];
-
     
-    //creat class/object called landmark - inherit from nsobject
-    //build out landmark object
-    // apply landmark class
+  
     
     Landmark * capitalBuilding = [[Landmark alloc] initWithCoord:CLLocationCoordinate2DMake(35.7804, -78.6391) title:@"Capital Building" subtitlle:@"The place where the capital is"];
     
     //place mark on map
     [self.mapView addAnnotation:capitalBuilding];
     
+
+//    Landmark * providence = [[Landmark alloc] initWithCoord:CLLocationCoordinate2DMake(41.8239891, -71.412834299) title:@"Providence, RI" subtitlle:@"Harry and Llyod Start"];
+//    
+//    [self.mapView addAnnotation:providence];
+//    
+//    Landmark * assspen = [[Landmark alloc] initWithCoord:CLLocationCoordinate2DMake(39.1910983, -106.8175387) title:@"Providence, RI" subtitlle:@"Harry and Llyod Start"];
+//    
+//    [self.mapView addAnnotation:assspen];
+//    
+    
     self.manager.delegate = self;
     [self.manager startUpdatingLocation];
+    
+    UIBarButtonItem * locationButton = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addButtonPressed)];
+    self.navigationItem.leftBarButtonItem = locationButton;
+    
     
     //display user location
     self.mapView.showsUserLocation = YES;
     
     //must first ask for location. two types - when in use and always on
-    //put in CLLocation manager  instance ( a request for permission) above
+    //put in CLLocation manager instance (a request for permission) above
     
-
+    [self.manager requestAlwaysAuthorization];
     
     //create CL Location from capial building instance of landmark class
     CLLocation * capitalLocation = [[CLLocation alloc]initWithLatitude:capitalBuilding.coordinate.latitude longitude:capitalBuilding.coordinate.longitude];
@@ -85,35 +104,88 @@
     [self zoomMapToRegionEncapsulatingLocation:capitalLocation andLocation:currentLocation];
     }
         
-        
+
+    
     // Do any additional setup after loading the view, typically from a nib.
 }
 
+
++(UIViewController *)controllerForInsidePopover{
+    UIViewController * createMeNow = [[UIViewController alloc]init];
+    
+    UITextView *firstText = [UITextField alloc]initWithFrame:CGRectMake[(10, 10, self.view.frame.size.width-40, 30)];
+    
+    [createMeNow.view addSubView: firstText];
+    
+    UITextView *secondText = [UITextField alloc]initWithFrame:CGRectMake[(10, 50, self.view.frame.size.width-40, 30)];
+    
+    [createMeNow.view addSubView: secondText];
+    
+    UIButton * closeMeButton = [[UIButton alloc]initWithFrame:CGRectMake(10, 90, 200, 35)];
+    
+    [closeMeButton addTarget:createMeNow action:@selector(dismissAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    
+    return createMeNow;
+}
+
+-(IBAction)addButtonPressed: (UIBarButtonItem*)sender
+{
+    
+    UIViewController* insideViewController = [self controllerForInsidePopover];
+    insideViewController.modalPresentationStyle = UIModalPresentationPopover;
+
+    UIPopoverPresentationController * popPresController = [self.insideViewController popoverPresentationController];
+    
+    popPresController.delegate = self;
+    popPresController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+   // popPresController.barButtonItem = sender;
+    
+    [self presentViewController:insideViewController animated:YES completion:nil];
+    
+}
+
+-(UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller{
+    
+    return UIModalPresentationNone;
+}
+
+
+
+
+
+- (BOOL)popoverPresentationControllerShouldDismissPopover:(UIPopoverPresentationController *)popoverPresentationController{
+    return YES;
+}
+
+
 -(void)centerMapOnLocation:(CLLocationCoordinate2D)location{
-    
-    
     
 }
 
 -(void)zoomMapToRegionEncapsulatingLocation:(CLLocation*)firstLoc andLocation:(CLLocation*)secondLoc{
     
-    //define point halfway between one latitude and another
-    float lat = (firstLoc.coordinate.latitude + secondLoc.coordinate.latitude) /2;
+    float lat =(firstLoc.coordinate.latitude + secondLoc.coordinate.latitude) /2;
     
-    //dfine same for longitude
-    float longitude = (firstLoc.coordinate.longitude + secondLoc.coordinate.latitude) /2;
+    float longitude = (firstLoc.coordinate.longitude + secondLoc.coordinate.longitude) /2;
     
-    //create distance between the two
-    CLLocationDistance distance = [firstLoc distanceFromLocation:secondLoc]/111.0f;
+    
+    CLLocationDistance distance = [firstLoc distanceFromLocation:secondLoc];
     
     CLLocation *centerLocation = [[CLLocation alloc]initWithLatitude:lat longitude:longitude];
     
-    MKCoordinateSpan span = MKCoordinateSpanMake(distance, distance);
+    //    MKCoordinateSpan span = MKCoordinateSpanMake(2000, 2000);
     
-    MKCoordinateRegion region = MKCoordinateRegionMake(centerLocation.coordinate, span);
-    
-    [self.mapView setRegion:region];
+    if (CLLocationCoordinate2DIsValid(centerLocation.coordinate)){
+        
+        MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(centerLocation.coordinate, distance,distance);
+        
+        [self.mapView setRegion:region animated:YES];
+        
+    }
 }
+
+
+
 
 #pragma mark
 
@@ -136,16 +208,22 @@
     //create CL Location from capial building instance of landmark class
     CLLocation * capitalLocation = [[CLLocation alloc]initWithLatitude:capitalBuilding.coordinate.latitude longitude:capitalBuilding.coordinate.longitude];
     
-    CLLocation * currentLocation = self.mapView.userLocation.location;
+    CLLocation * currentLocation = lastLocation;
     
     if (currentLocation && capitalLocation) {
         
         [self zoomMapToRegionEncapsulatingLocation:capitalLocation andLocation:currentLocation];
     }
-    
-    
+
     [manager stopUpdatingLocation];
 }
+
+#pragma mark Navigation Controller
+
+
+
+
+
 
 
 - (void)didReceiveMemoryWarning {
