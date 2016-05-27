@@ -20,9 +20,9 @@
 
 @property (strong, nonatomic) UINavigationController *presentViewController;
 
-
-
 @property(strong, nonatomic)UIViewController *insideViewController;
+
+
 
 
 @end
@@ -63,13 +63,6 @@
     
     [self.view addSubview:self.mapView];
     
-  
-    
-    Landmark * capitalBuilding = [[Landmark alloc] initWithCoord:CLLocationCoordinate2DMake(35.7804, -78.6391) title:@"Capital Building" subtitlle:@"The place where the capital is"];
-    
-    //place mark on map
-    [self.mapView addAnnotation:capitalBuilding];
-    
     
     self.manager.delegate = self;
     [self.manager startUpdatingLocation];
@@ -85,20 +78,9 @@
     //put in CLLocation manager instance (a request for permission) above
     
     [self.manager requestAlwaysAuthorization];
-    
-    //create CL Location from capial building instance of landmark class
-    CLLocation * capitalLocation = [[CLLocation alloc]initWithLatitude:capitalBuilding.coordinate.latitude longitude:capitalBuilding.coordinate.longitude];
-    
-    CLLocation * currentLocation = self.mapView.userLocation.location;
-    
-    if (currentLocation && capitalLocation) {
-    
-    [self zoomMapToRegionEncapsulatingLocation:capitalLocation andLocation:currentLocation];
-    }
-        
+
 
     
-    // Do any additional setup after loading the view, typically from a nib.
 }
 
 
@@ -141,48 +123,92 @@
 }
 
 -(void)lookUpCities:(NSArray*)cityArray{
-    NSAssert2(@"Both strings", @"are present", cityArray[0], cityArray[1]);
     
+    
+__block CLLocation * firstCityLocation = [[CLLocation alloc]init];
+
+__block CLLocation * secondCityLocation = [[CLLocation alloc]init];
+    
+
+    
+    //take city locations
+    NSLog(@"%@", cityArray[0]);
+    NSLog(@"%@", cityArray[1]);
+    //create variaibles to hold locations
+
+
+    //place them into forward geocoder
     CLGeocoder * geocoder = [[CLGeocoder alloc]init];
+    NSString *firstCityString = [[NSString alloc]init];
+    firstCityString = cityArray[0];
     
-    __block CLLocationCoordinate2D firstPlace;
-    __block CLLocationCoordinate2D secondPlace;
-    
-    __block ViewController * weakSelf = self;
-    
-    [geocoder geocodeAddressString:cityArray[0]
-                 completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks,
-                                     NSError * _Nullable error) {
-                     CLPlacemark * placemark = [placemarks lastObject];
-                     firstPlace = placemark.location.coordinate;
-                        Landmark *theFirst = [[Landmark alloc]initWithCoord:firstPlace title:cityArray[0] subtitlle:@"The first location"];
-                     [weakSelf.mapView addAnnotation:theFirst];
-                     [geocoder cancelGeocode];
-                     
-                     CLLocationCoordinate2D *pinLocation CLLocationCoordinate2D alloc
-                     pinLocation.latitude = theFirst.
-                     
+    [geocoder geocodeAddressString:firstCityString completionHandler:^(NSArray *placemarks, NSError *error) {
+        if (!error){
+    CLPlacemark *placemark = [placemarks objectAtIndex:0];
+            
+            float lat = placemark.location.coordinate.latitude;
+            float lon = placemark.location.coordinate.longitude;
+            
+            NSLog(@"%f",lat);
+            NSLog(@"%f",lon);
+            
+            
+            Landmark * firstCity = [[Landmark alloc] initWithCoord:CLLocationCoordinate2DMake(lat, lon) title:@"First City" subtitlle:@""];
+            firstCityLocation = [[CLLocation alloc]initWithLatitude:lat longitude:lon];
+            
+        
+            
+            
+            [[self mapView]addAnnotation:(firstCity)];
+            
+
+        }else{
+            NSLog(@"Error");
+        }
+        
     }];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
+    
+        //place them into forward geocoder
+        CLGeocoder * geocoder2 = [[CLGeocoder alloc]init];
+        NSString *secondCityString = [[NSString alloc]init];
+        secondCityString = cityArray[1];
+    
+        [geocoder2 geocodeAddressString:secondCityString completionHandler:^(NSArray *placemarks, NSError *error) {
+            if (!error){
+                CLPlacemark *placemark = [placemarks objectAtIndex:0];
+                
+                float lat = placemark.location.coordinate.latitude;
+                float lon = placemark.location.coordinate.longitude;
+                
+                NSLog(@"%f",lat);
+                NSLog(@"%f",lon);
+                
+                
+                Landmark * secondCity = [[Landmark alloc] initWithCoord:CLLocationCoordinate2DMake(lat, lon) title:@"Second City" subtitlle:@""];
+                secondCityLocation = [[CLLocation alloc]initWithLatitude:lat longitude:lon];
+
+                
+                [[self mapView]addAnnotation:(secondCity)];
+                
+            }else{
+                NSLog(@"Error");
+            }
+            
+            
+            
+            
+            CLLocationDistance distance = [firstCityLocation distanceFromLocation:secondCityLocation];
+            // distance is a double representing the distance in meters
+            NSLog(@"%f", distance);
+            
+            NSString *titleString = [NSString stringWithFormat:@"%0.0f Meters",distance];
+            
+            self.title = titleString;
         
-    [geocoder geocodeAddressString:cityArray[1]
-                 completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks,
-                                     NSError * _Nullable error) {
-                    CLPlacemark * placemark = [placemarks lastObject];
-                    secondPlace = placemark.location.coordinate;
-                    Landmark *theSecond = [[Landmark alloc]initWithCoord:secondPlace title:cityArray[1] subtitlle:@"The second location"];
-                     [weakSelf.mapView addAnnotation:theSecond];
-                     [geocoder cancelGeocode];
-                     
-                     }];
-      });
+}];
 
-
-    
-    
-    
-    
 }
 
 
@@ -232,8 +258,6 @@
     
     CLLocation *centerLocation = [[CLLocation alloc]initWithLatitude:lat longitude:longitude];
     
-    //    MKCoordinateSpan span = MKCoordinateSpanMake(2000, 2000);
-    
     if (CLLocationCoordinate2DIsValid(centerLocation.coordinate)){
         
         MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(centerLocation.coordinate, distance,distance);
@@ -249,33 +273,7 @@
 #pragma mark
 
 
--(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations{
-    CLLocation* firstLocation = [locations firstObject];
-    CLLocation* lastLocation = [locations lastObject];
-    
-    if ([firstLocation isEqual: lastLocation]){
-        NSLog(@"Same Place");
-    }else{
-        NSLog(@"Who knows!");
-    }
-    
-    Landmark * capitalBuilding = [[Landmark alloc] initWithCoord:CLLocationCoordinate2DMake(35.7804, -78.6391) title:@"Capital Building" subtitlle:@"The place where the capital is"];
-    
-    //must first ask for location. two types - when in use and always on
-    //put in CLLocation manager  instance ( a request for permission) above
-    
-    //create CL Location from capial building instance of landmark class
-    CLLocation * capitalLocation = [[CLLocation alloc]initWithLatitude:capitalBuilding.coordinate.latitude longitude:capitalBuilding.coordinate.longitude];
-    
-    CLLocation * currentLocation = lastLocation;
-    
-    if (currentLocation && capitalLocation) {
-        
-        [self zoomMapToRegionEncapsulatingLocation:capitalLocation andLocation:currentLocation];
-    }
 
-    [manager stopUpdatingLocation];
-}
 
 
 #pragma mark Navigation Controller
