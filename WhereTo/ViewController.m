@@ -20,7 +20,7 @@
 
 @property (strong, nonatomic) UINavigationController *presentViewController;
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *plusButton;
+
 
 @property(strong, nonatomic)UIViewController *insideViewController;
 
@@ -70,15 +70,6 @@
     //place mark on map
     [self.mapView addAnnotation:capitalBuilding];
     
-
-//    Landmark * providence = [[Landmark alloc] initWithCoord:CLLocationCoordinate2DMake(41.8239891, -71.412834299) title:@"Providence, RI" subtitlle:@"Harry and Llyod Start"];
-//    
-//    [self.mapView addAnnotation:providence];
-//    
-//    Landmark * assspen = [[Landmark alloc] initWithCoord:CLLocationCoordinate2DMake(39.1910983, -106.8175387) title:@"Providence, RI" subtitlle:@"Harry and Llyod Start"];
-//    
-//    [self.mapView addAnnotation:assspen];
-//    
     
     self.manager.delegate = self;
     [self.manager startUpdatingLocation];
@@ -168,6 +159,9 @@
                      [weakSelf.mapView addAnnotation:theFirst];
                      [geocoder cancelGeocode];
                      
+                     CLLocationCoordinate2D *pinLocation CLLocationCoordinate2D alloc
+                     pinLocation.latitude = theFirst.
+                     
     }];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -184,7 +178,13 @@
                      }];
       });
 
+
+    
+    
+    
+    
 }
+
 
 
 -(IBAction)addButtonPressed: (UIBarButtonItem*)sender
